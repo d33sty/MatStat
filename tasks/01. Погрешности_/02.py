@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.stats as stats
 
+# дано
 I = list(
     map(lambda x: x / 1000, [141, 144, 157, 147, 151, 165, 142, 150, 163, 161])
 )  # ток в си в амперах
@@ -30,6 +31,7 @@ am_max = 0.200
 om_max = 5
 
 
+# решение
 # 1. результаты прямых измерений тока и сопротивления
 # квантиль p = 0.95, n = 10
 quantile = stats.t.ppf(0.975, df=9)
@@ -63,7 +65,7 @@ print("Ток:")
 print(f"среднее значение: I = {I_mean*1000:.1f} мА")
 print(f"статистические характеристики:")
 print(f"СКО: {I_std*1000:.2f} мА")
-print(f"дисперсия: {I_disp*1e6:.2f} мА²")
+print(f"дисперсия: {I_disp*1e6:.2f} мА^2")
 print(f"СКО среднего: {I_std_sr*1000:.2f} мА")
 print(f"погрешности (p = 0.95):")
 print(f"случайная: deltaI_сл = {deltaI_rand*1000:.1f} мА")
@@ -75,7 +77,7 @@ print("Сопротивление:")
 print(f"среднее значение: R = {R_mean:.3f} Ом")
 print(f"статистические характеристики:")
 print(f"СКО: {R_std:.3f} Ом")
-print(f"дисперсия: {R_disp:.4f} Ом²")
+print(f"дисперсия: {R_disp:.4f} Ом^2")
 print(f"СКО среднего: {R_std_sr:.3f} Ом")
 print(f"погрешности (p = 0.95):")
 print(f"случайная: deltaR_сл = {deltaR_rand:.2f} Ом")
@@ -106,18 +108,18 @@ deltaP = np.sqrt((dP_dI * deltaI) ** 2 + (dP_dR * deltaR) ** 2)
 print(f"статистические характеристики:")
 print(f"среднее значение: P = {P_mean*1000:.2f} мВт")
 print(f"СКО: {P_std*1000:.2f} мВт")
-print(f"дисперсия: {P_disp*1e6:.2f} мВт²")
+print(f"дисперсия: {P_disp*1e6:.2f} мВт^2")
 print(f"СКО среднего: {P_std_sr*1000:.2f} мВт")
 print()
 print(f"оценка погрешности")
 print(f"частные производные в точке средних:")
 print(f"dP/dI = 2*I*R = {dP_dI:.4f} В")
-print(f"dP/dR = I² = {dP_dR:.6f} А²")
+print(f"dP/dR = I^2 = {dP_dR:.6f} А^2")
 print(f"составляющие погрешности:")
 print(f"(dP/dI)*deltaI = {dP_dI*deltaI*1000:.2f} мВт")
 print(f"(dP/dR)*deltaR = {dP_dR*deltaR*1000:.2f} мВт")
 print(
-    f"полная погрешность: deltaP = sqrt( (dP/dI*deltaI)² + (dP/dR*deltaR)² ) = {deltaP*1000:.1f} мВт"
+    f"полная погрешность: deltaP = sqrt( (dP/dI*deltaI)^2 + (dP/dR*deltaR)^2 ) = {deltaP*1000:.1f} мВт"
 )
 print(f"относительная погрешность: delta = {deltaP/P_mean*100:.1f}%")
 print(f"результат: P = ({P_mean*1000:.0f} ± {deltaP*1000:.0f}) мВт, p = 0.95")
@@ -195,14 +197,14 @@ D1 = deltaP1**2
 D2 = deltaP2**2
 
 print(f"квадраты погрешностей:")
-print(f"deltaP1² = {deltaP1**2*1e6:.0f} (мВт)²")
-print(f"deltaP2² = {deltaP2**2*1e6:.0f} (мВт)²")
+print(f"deltaP1^2 = {deltaP1**2*1e6:.0f} (мВт)^2")
+print(f"deltaP2^2 = {deltaP2**2*1e6:.0f} (мВт)^2")
 print()
 
 # оптимальные весовые коэффициенты
 # 1) k1 + k2 = 1, т.к. сохраняется матожидание
-# 2) k1² * D1 + k2² * D2 -> min
-# k1² * D1 + D2 - 2*k1*D2 - k1² * D2 -> min // берем производную по k1
+# 2) k1^2 * D1 + k2^2 * D2 -> min
+# k1^2 * D1 + D2 - 2*k1*D2 - k1^2 * D2 -> min // берем производную по k1
 # 2*k1*D1 - 2*D2 - 2*k1*D2 = 0
 # k1 = D2 / (D1 + D2)
 # k2 = 1 - k1 = D1 / (D1 + D2)
@@ -211,8 +213,8 @@ k1 = D2 / (D1 + D2)
 k2 = D1 / (D1 + D2)
 
 print(f"оптимальные весовые коэффициенты:")
-print(f"k1 = deltaP2²/(deltaP1²+deltaP2²) = {k1:.4f} (вес текущего измерения)")
-print(f"k2 = deltaP1²/(deltaP1²+deltaP2²) = {k2:.4f} (вес предыдущего измерения)")
+print(f"k1 = deltaP2^2/(deltaP1^2+deltaP2^2) = {k1:.4f} (вес текущего измерения)")
+print(f"k2 = deltaP1^2/(deltaP1^2+deltaP2^2) = {k2:.4f} (вес предыдущего измерения)")
 print()
 
 # объединенное значение мощности
@@ -229,8 +231,9 @@ deltaP_combined = np.sqrt(k1**2 * deltaP1**2 + k2**2 * deltaP2**2)
 print()
 print(f"погрешность объединенного значения:")
 print(
-    f"deltaP = sqrt(k1²*deltaP1² + k2²*deltaP2²) = sqrt({k1**2:.4f}*{deltaP1**2*1e6:.0f} + {k2**2:.4f}*{deltaP2**2*1e6:.0f}) = {deltaP_combined*1000:.1f} мВт"
+    f"deltaP = sqrt(k1^2*deltaP1^2 + k2^2*deltaP2^2) = sqrt({k1**2:.4f}*{deltaP1**2*1e6:.0f} + {k2**2:.4f}*{deltaP2**2*1e6:.0f}) = {deltaP_combined*1000:.1f} мВт"
 )
+
 print(f"относительная погрешность: delta = {deltaP_combined/P_combined*100:.1f}%")
 print()
 print(
