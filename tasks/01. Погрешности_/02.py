@@ -233,7 +233,6 @@ print(f"погрешность объединенного значения:")
 print(
     f"deltaP = sqrt(k1^2*deltaP1^2 + k2^2*deltaP2^2) = sqrt({k1**2:.4f}*{deltaP1**2*1e6:.0f} + {k2**2:.4f}*{deltaP2**2*1e6:.0f}) = {deltaP_combined*1000:.1f} мВт"
 )
-
 print(f"относительная погрешность: delta = {deltaP_combined/P_combined*100:.1f}%")
 print()
 print(
