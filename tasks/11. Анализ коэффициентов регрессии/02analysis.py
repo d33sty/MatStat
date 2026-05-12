@@ -27,7 +27,7 @@ slope, intercept, r_value, p_value, std_err = stats.linregress(m, N)
 print("\nСпособ 1 (linregress):")
 print(f"  a = {slope:.4f} имп/г")
 print(f"  b = {intercept:.4f} имп")
-print(f"  r  = {r_value:.6f},   r² = {r_value**2:.6f}")
+print(f"  r  = {r_value:.6f},   r2 = {r_value**2:.6f}")
 
 # ---------- Способ 2: матричная форма МНК ----------
 X = np.column_stack((np.ones(n), m))  # матрица плана [1, m]
@@ -47,7 +47,7 @@ residuals = N - N_pred  # остатки
 p = 2  # число параметров (a, b)
 S2_y = np.sum(residuals**2) / (n - p)  # несмещённая оценка дисперсии
 
-print(f"\n1) Оценённая дисперсия измерений:  S²_y = {S2_y:.4f}")
+print(f"\n1) Оценённая дисперсия измерений:  S2_y = {S2_y:.4f}")
 print(f"   Среднеквадратическое отклонение: S_y  = {np.sqrt(S2_y):.4f}")
 
 # ---------- 2) Дисперсии оценок параметров (скалярное исчисление) ----------
@@ -61,21 +61,21 @@ S_a = np.sqrt(S2_a)
 S_b = np.sqrt(S2_b)
 
 print(f"\n2) Дисперсии оценок параметров (скалярное исчисление):")
-print(f"   S²_a = {S2_a:.6f},  S_a = {S_a:.4f}")
-print(f"   S²_b = {S2_b:.4f},  S_b = {S_b:.4f}")
+print(f"   S2_a = {S2_a:.6f},  S_a = {S_a:.4f}")
+print(f"   S2_b = {S2_b:.4f},  S_b = {S_b:.4f}")
 
 # ---------- 3) Ковариационная матрица параметров ----------
 # Cov(θ) = S²_y * (X'X)^{-1}
 C = S2_y * np.linalg.inv(X.T @ X)
 
 print(f"\n3) Ковариационная матрица параметров Cov([b, a]):")
-print(f"   [  S²_b      Cov(b,a) ]   [ {C[0,0]:10.4f}  {C[0,1]:10.4f} ]")
-print(f"   [ Cov(a,b)   S²_a     ] = [ {C[1,0]:10.4f}  {C[1,1]:10.6f} ]")
+print(f"   [  S2_b      Cov(b,a) ]   [ {C[0,0]:10.4f}  {C[0,1]:10.4f} ]")
+print(f"   [ Cov(a,b)   S2_a     ] = [ {C[1,0]:10.4f}  {C[1,1]:10.6f} ]")
 print(f"   (порядок параметров: [b, a], т.е. [свободный член, наклон])")
 
 # Проверка: диагональные элементы должны совпасть со скалярными оценками
-print(f"\n   Проверка: C[0,0] = {C[0,0]:.4f} ≈ S²_b = {S2_b:.4f}")
-print(f"            C[1,1] = {C[1,1]:.6f} ≈ S²_a = {S2_a:.6f}")
+print(f"\n   Проверка: C[0,0] = {C[0,0]:.4f} = S2_b = {S2_b:.4f}")
+print(f"            C[1,1] = {C[1,1]:.6f} = S2_a = {S2_a:.6f}")
 
 # ---------- 4) Доверительные интервалы ----------
 alpha = 0.05  # уровень значимости
@@ -85,8 +85,8 @@ delta_a = t_cr * S_a
 delta_b = t_cr * S_b
 
 print(f"\n4) Доверительные интервалы (α = {alpha}, t_кр = {t_cr:.4f}):")
-print(f"   a ∈ [{a - delta_a:.4f};  {a + delta_a:.4f}]")
-print(f"   b ∈ [{b - delta_b:.4f};  {b + delta_b:.4f}]")
+print(f"   a : [{a - delta_a:.4f};  {a + delta_a:.4f}]")
+print(f"   b : [{b - delta_b:.4f};  {b + delta_b:.4f}]")
 
 # ---------- 5) Проверка гипотез H0: a=0 и H0: b=0 ----------
 t_a = a / S_a  # t-статистика для наклона
@@ -97,10 +97,10 @@ p_b = 2 * (1 - stats.t.cdf(abs(t_b), n - p))
 
 print(f"\n5) Проверка гипотез (α = {alpha}):")
 print(
-    f"   H0: a = 0  |  t = {t_a:.4f},  p-value = {p_a:.6f}  →  {'ОТВЕРГАЕТСЯ' if p_a < alpha else 'НЕ ОТВЕРГАЕТСЯ'}"
+    f"   H0: a = 0  |  t = {t_a:.4f},  p-value = {p_a:.6f}    {'ОТВЕРГАЕТСЯ' if p_a < alpha else 'НЕ ОТВЕРГАЕТСЯ'}"
 )
 print(
-    f"   H0: b = 0  |  t = {t_b:.4f},  p-value = {p_b:.6f}  →  {'ОТВЕРГАЕТСЯ' if p_b < alpha else 'НЕ ОТВЕРГАЕТСЯ'}"
+    f"   H0: b = 0  |  t = {t_b:.4f},  p-value = {p_b:.6f}    {'ОТВЕРГАЕТСЯ' if p_b < alpha else 'НЕ ОТВЕРГАЕТСЯ'}"
 )
 
 # ---------- График 1 ----------
@@ -147,8 +147,8 @@ res_w = N - N_pred_w
 # Взвешенная сумма квадратов остатков
 S2_y_w = np.sum(w * res_w**2) / (n - p)
 
-print(f"\n1) Оценённая дисперсия (взвешенная):  S²_y_w = {S2_y_w:.6f}")
-print(f"   (при корректной модели ≈ 1, т.к. веса = 1/σ²)")
+print(f"\n1) Оценённая дисперсия (взвешенная):  S2_y_w = {S2_y_w:.6f}")
+print(f"   (при корректной модели ≈ 1)")
 
 # ---------- 2) Дисперсии оценок параметров ----------
 # При взвешенном МНК Cov(θ) = (X'WX)^{-1}
@@ -173,8 +173,8 @@ delta_a_w = t_cr * S_a_w
 delta_b_w = t_cr * S_b_w
 
 print(f"\n4) Доверительные интервалы (α = {alpha}, t_кр = {t_cr:.4f}):")
-print(f"   a_w ∈ [{a_w - delta_a_w:.4f};  {a_w + delta_a_w:.4f}]")
-print(f"   b_w ∈ [{b_w - delta_b_w:.4f};  {b_w + delta_b_w:.4f}]")
+print(f"   a_w : [{a_w - delta_a_w:.4f};  {a_w + delta_a_w:.4f}]")
+print(f"   b_w : [{b_w - delta_b_w:.4f};  {b_w + delta_b_w:.4f}]")
 
 # ---------- 5) Проверка гипотез ----------
 t_aw = a_w / S_a_w
@@ -185,10 +185,10 @@ p_bw = 2 * (1 - stats.t.cdf(abs(t_bw), n - p))
 
 print(f"\n5) Проверка гипотез (α = {alpha}):")
 print(
-    f"   H0: a_w = 0  |  t = {t_aw:.4f},  p-value = {p_aw:.6f}  →  {'ОТВЕРГАЕТСЯ' if p_aw < alpha else 'НЕ ОТВЕРГАЕТСЯ'}"
+    f"   H0: a_w = 0  |  t = {t_aw:.4f},  p-value = {p_aw:.6f}    {'ОТВЕРГАЕТСЯ' if p_aw < alpha else 'НЕ ОТВЕРГАЕТСЯ'}"
 )
 print(
-    f"   H0: b_w = 0  |  t = {t_bw:.4f},  p-value = {p_bw:.6f}  →  {'ОТВЕРГАЕТСЯ' if p_bw < alpha else 'НЕ ОТВЕРГАЕТСЯ'}"
+    f"   H0: b_w = 0  |  t = {t_bw:.4f},  p-value = {p_bw:.6f}    {'ОТВЕРГАЕТСЯ' if p_bw < alpha else 'НЕ ОТВЕРГАЕТСЯ'}"
 )
 
 # ---------- График 2 ----------
