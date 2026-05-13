@@ -150,6 +150,7 @@ var_N0_matrix = x0 @ C @ x0
 
 print(f"\n2) Дисперсия среднего значения:")
 print(f"   Var(N0) = S2_y*(1/n + (m0-m_mean)^2/Sxx) = {var_N0_scalar:.1f}")
+print(f"   (матричная форма: {var_N0_matrix:.1f})")
 print(f"   S(N0) = {np.sqrt(var_N0_scalar):.1f} имп")
 
 # ---------- 3) Доверительный интервал для среднего ----------
@@ -174,6 +175,7 @@ print(f"\n5) Дисперсия прогноза для одного измер�
 print(
     f"   Var(N0_pred) = S2_y + Var(N0) = {S2_y:.1f} + {var_N0_scalar:.1f} = {var_pred_scalar:.1f}"
 )
+print(f"   (матричная форма: {var_pred_matrix:.1f})")
 print(f"   S(N0_pred) = {np.sqrt(var_pred_scalar):.1f} имп")
 
 # ---------- 6) Прогнозный интервал для одного измерения ----------
