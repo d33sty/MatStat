@@ -54,6 +54,7 @@ new = np.array(
     ]
 )
 
+# число пар наблюдений (один и тот же грузовик — две шины)
 n_pairs = len(standard)
 print(f"Количество грузовиков: n = {n_pairs}")
 print()
@@ -63,12 +64,16 @@ print("1. Предварительный анализ данных")
 print()
 
 print("Стандартная шина:")
+# выборочное среднее: x_mean = (1/n) * sum(x_i)
 print(f"Среднее значение: x_ст = {np.mean(standard):.3f} мм")
+# исправленное СКО: s = sqrt( sum((x_i - x_mean)^2) / (n-1) ), ddof=1 даёт несмещённую оценку
 print(f"СКО: s_ст = {np.std(standard, ddof=1):.3f} мм")
 print()
 
 print("Новая шина:")
+# выборочное среднее для новой шины
 print(f"Среднее значение: x_н = {np.mean(new):.3f} мм")
+# исправленное СКО для новой шины
 print(f"СКО: s_н = {np.std(new, ddof=1):.3f} мм")
 print()
 
@@ -76,9 +81,16 @@ print()
 print("2. Анализ парных разностей")
 print()
 
+# парные разности d_i = x_st_i - x_new_i (для каждого грузовика отдельно)
 differences = standard - new
+
+# среднее парных разностей: d_mean = (1/n) * sum(d_i)
 d_mean = np.mean(differences)
+
+# исправленное СКО парных разностей: s_d = sqrt( sum((d_i - d_mean)^2) / (n-1) )
 d_std = np.std(differences, ddof=1)
+
+# стандартная ошибка среднего: s_d_sr = s_d / sqrt(n)
 d_std_sr = d_std / np.sqrt(n_pairs)
 
 print("Статистические характеристики разностей:")
@@ -91,10 +103,18 @@ print()
 print("3. Проверка гипотезы о равенстве средних")
 print()
 
-t_stat = d_mean / d_std_sr  # t-статистика
-df = n_pairs - 1  # число степеней свободы
-t_critical = stats.t.ppf(0.975, df=df)  # квантиль
-p_value = 2 * (1 - stats.t.cdf(abs(t_stat), df=df))  # двустороннее p-значение
+# наблюдаемое значение t-статистики: t = d_mean / s_d_sr
+# при H0: mu_d = 0 эта величина имеет распределение Стьюдента с df = n-1
+t_stat = d_mean / d_std_sr
+
+# число степеней свободы для парного t-критерия: df = n - 1
+df = n_pairs - 1
+
+# критическое значение t_кр: двусторонний квантиль уровня 0.975 (alpha/2 = 0.025 в каждом хвосте)
+t_critical = stats.t.ppf(0.975, df=df)
+
+# двустороннее p-значение: P = 2 * P(T > |t|) = 2 * (1 - F_t(|t|))
+p_value = 2 * (1 - stats.t.cdf(abs(t_stat), df=df))
 
 print(f"t-статистика: t = {t_stat:.4f}")
 print(f"Степени свободы: df = {df}")
@@ -106,6 +126,7 @@ print()
 print("4. Доверительный интервал для средней разности")
 print()
 
+# границы 95% ДИ: d_mean +/- t_кр * s_d_sr
 ci_lower = d_mean - t_critical * d_std_sr
 ci_upper = d_mean + t_critical * d_std_sr
 
@@ -120,6 +141,7 @@ print()
 print(f"Средняя разность износа (стандартная - новая) = {d_mean:.3f} мм")
 print(f"доверительный интервал: [{ci_lower:.3f}, {ci_upper:.3f}] мм")
 
+# сравниваем |t| с t_кр: если |t| > t_кр -- отвергаем H0 об отсутствии разницы
 if abs(t_stat) > t_critical:
     print(f"|t| = {abs(t_stat):.4f} > t_кр = {t_critical:.4f}")
     print("Нулевая гипотеза отвергается на уровне значимости alpha = 0.05")
